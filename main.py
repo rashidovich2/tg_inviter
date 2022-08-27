@@ -27,7 +27,7 @@ for number in PHONES_LIST:
         print(number)
         #Запрос на получение кода и вход
         TelegramClient(number, 6087612,
-                       "1148dcdf0ec9b2e68e97b0fa104f14a4").start(number)
+                       "1148dcdf0ec9b2e68e97b0fa104f14a4").start(number).disconnect()
 
 def main():
     i = 0

@@ -32,10 +32,17 @@ class Inviter:
 
     def login(self):
         try:
-            s = socks.socksocket()
-            self.client = TelegramClient(self.phone, 6087612, "1148dcdf0ec9b2e68e97b0fa104f14a4")
+            if config.PROXY_ENABLED:
+                s = socks.socksocket()
+                rnd_proxy = random.choice(config.PROXY_IPS).split(":")
+                print(f"Подключение к телеграмм с прокси {rnd_proxy}!")
+                self.client = TelegramClient(self.phone, 6087612, "1148dcdf0ec9b2e68e97b0fa104f14a4", proxy=s.set_proxy(socks.HTTP, rnd_proxy[0], rnd_proxy[1]) )
+                self.client.start(self.phone)
+            else:
+                print(f"Подключение к телеграмм без прокси!")
+                self.client = TelegramClient(self.phone, 6087612, "1148dcdf0ec9b2e68e97b0fa104f14a4")
+                self.client.start(self.phone)
 
-            self.client.start(self.phone)
             return True
         except PhoneNumberBannedError:
             print(f"{self.get_time_str()} | Ошибка: аккаунт {self.phone} был удалён!")
@@ -107,7 +114,7 @@ class Inviter:
         for j, user in enumerate(users):
             ctr = j+1
             cur_time = self.get_time_str()
-            if invited + not_invited == config.INV_CNT:
+            if invited == config.INV_CNT:
                 cur_day = date.today().day
                 cur_hour = datetime.now().hour
                 cur_min = datetime.now().minute
@@ -189,10 +196,12 @@ class Inviter:
                     break
                 except PeerFloodError as e:
                     print(f"{cur_time} | Ошибка: Слишком много запросов!")
-                    #cur_day = date.today().day
-                    #cur_hour = datetime.now().hour
-                    #print(f"{cur_time} | Аккаунт {self.me.first_name} уходит в режим ожидания до {cur_day + 1} числа и {cur_hour+1} часов!")
-                    #self.lists.add_check(self.phone, [cur_day + 1, cur_hour+1])
+                    cur_day = date.today().day
+                    cur_hour = datetime.now().hour
+                    cur_min = datetime.now().minute
+                    cur_sec = datetime.now().second
+                    print(f"{cur_time} | Аккаунт {self.me.first_name} уходит в режим ожидания до {cur_day + 1} числа и {cur_hour+1} часов!")
+                    self.lists.add_check(self.phone, [cur_day + 1, cur_hour+1, cur_min, cur_sec])
                     break
                 except:
                     print(f"{cur_time} | Неизвестная ошибка: ", sys.exc_info())
@@ -202,7 +211,7 @@ class Inviter:
                 except KeyboardInterrupt:
                     break
 
-        self.lists.set_request_count(self.phone, invited+not_invited)
+        self.lists.set_request_count(self.phone, invited)
         print(f"{cur_time} | Бот {self.me.first_name} закончил инвайт на {ctr} юзере!")
         print(f"Приглашено {invited} юзеров")
         print(f"Не приглашено {not_invited} юзеров")
