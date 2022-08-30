@@ -1,6 +1,5 @@
 import json
 
-
 class Lists:
 
     # USERS GETTERS
