@@ -37,12 +37,10 @@ class Inviter:
                 rnd_proxy = random.choice(config.PROXY_IPS).split(":")
                 print(f"Подключение к телеграмм с прокси {rnd_proxy}!")
                 self.client = TelegramClient(self.phone, 6087612, "1148dcdf0ec9b2e68e97b0fa104f14a4", proxy=s.set_proxy(socks.HTTP, rnd_proxy[0], rnd_proxy[1]) )
-                self.client.start(self.phone)
             else:
-                print(f"Подключение к телеграмм без прокси!")
+                print("Подключение к телеграмм без прокси!")
                 self.client = TelegramClient(self.phone, 6087612, "1148dcdf0ec9b2e68e97b0fa104f14a4")
-                self.client.start(self.phone)
-
+            self.client.start(self.phone)
             return True
         except PhoneNumberBannedError:
             print(f"{self.get_time_str()} | Ошибка: аккаунт {self.phone} был удалён!")
@@ -64,7 +62,7 @@ class Inviter:
                 f"{cur_time} | Ошибка: Таймаут на {e.seconds} секунд, это примерно {round(e.seconds / 60)} минут \n"
             )
             if config.CHECK_TIMEOUT:
-                for i in tqdm(range(e.seconds)):
+                for _ in tqdm(range(e.seconds)):
                     time.sleep(1)
             else:
                 cur_day = date.today().day
@@ -97,9 +95,9 @@ class Inviter:
         self.me = await self.client.get_me()
         print(f"{self.get_time_str()} | Бот {self.me.first_name} начал инвайт!")
 
-        
+
         users = self.lists.get_users_list()
-        
+
         random.shuffle(users)
 
         ctr = 0
@@ -108,7 +106,7 @@ class Inviter:
             invited = self.lists.get_request_count_list()[self.phone]
         except KeyError:
             invited = 0
-            
+
         not_invited = 0
 
         for j, user in enumerate(users):
@@ -171,7 +169,7 @@ class Inviter:
                         f"За время работы бот успел пригласить {invited} пользователей"
                     )
                     if config.CHECK_TIMEOUT:
-                        for i in tqdm(range(e.seconds)):
+                        for _ in tqdm(range(e.seconds)):
                             time.sleep(1)
                     else:
                         cur_day = date.today().day
@@ -205,7 +203,7 @@ class Inviter:
                     break
                 except:
                     print(f"{cur_time} | Неизвестная ошибка: ", sys.exc_info())
-                
+
                 try:
                     time.sleep(config.INV_KD)
                 except KeyboardInterrupt:

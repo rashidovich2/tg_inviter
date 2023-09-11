@@ -20,7 +20,7 @@ for number in PHONES_LIST:
     #Если номер не забанен
     if number not in BANNED_PHONES_LIST:
         #Если файл сессии существует
-        if os.path.exists(number + ".session"):
+        if os.path.exists(f"{number}.session"):
             #Ничего не делать
             continue
         #Вывод номера в консоль
